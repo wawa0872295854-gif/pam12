@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเช็คชื่อเข้าเรียนด้วยตัวเองสำหรับนักศึกษา</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #1b5e20; /* สีเขียวเข้มสถาบัน */
+            --secondary-color: #fbc02d; /* สีเหลืองทอง */
+            --light-bg: #f4f6f4;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --success-color: #2e7d32;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border-top: 8px solid var(--secondary-color);
+            margin-bottom: 25px;
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        form {
+            padding: 25px;
+        }
+
+        .section-title {
+            font-size: 1.05rem;
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #cccccc;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background-color: #fafafa;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(27, 94, 32, 0.1);
+        }
+
+        .location-btn {
+            background-color: #e8f5e9;
+            color: var(--primary-color);
+            border: 1px dashed var(--primary-color);
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            cursor: pointer;
+            font-weight: 500;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .location-btn:hover {
+            background-color: #c8e6c9;
+        }
+
+        .location-status {
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 4px 12px rgba(27, 94, 32, 0.2);
+        }
+
+        .submit-btn:hover {
+            background-color: #144517;
+        }
+
+        .submit-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Logs Summary Section */
+        .logs-container {
+            width: 100%;
+            max-width: 650px;
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+        }
+
+        .logs-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge-count {
+            background-color: var(--secondary-color);
+            color: #333;
+            font-size: 0.8rem;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .log-card {
+            border: 1px solid #e0e0e0;
+            border-left: 5px solid var(--success-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            background-color: #fafafa;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 8px;
+            border-bottom: 1px dashed #e0e0e0;
+            padding-bottom: 5px;
+        }
+
+        .log-body h4 {
+            font-size: 1.05rem;
+            color: #111;
+            margin-bottom: 5px;
+        }
+
+        .log-body p {
+            font-size: 0.9rem;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .empty-log {
+            text-align: center;
+            color: #888;
+            padding: 30px 0;
+            font-size: 0.95rem;
+        }
+
+        /* Loading Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0,0,0,0.1);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border-left-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Responsive Mobile Layout */
+        @media (max-width: 500px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+            body { padding: 10px; }
+            .header h1 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p style="font-weight: 500; color: var(--primary-color);">กำลังบันทึกข้อมูลเข้าสหัสบบ...</p>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>ระบบเช็คชื่อเข้าเรียนด้วยตัวเอง</h1>
+            <p>มหาวิทยาลัยเทคโนโลยีราชมงคลอีสาน (RMUTI)</p>
+        </div>
+
+        <form id="checkInForm">
+            <div class="section-title">📚 ข้อมูลรายวิชาและการแต่งกาย/ที่อยู่</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="subject">ชื่อวิชา <span style="color:red">*</span></label>
+                    <input type="text" id="subject" placeholder="เช่น การจัดการวิศวกรรม" required>
+                </div>
+                <div class="form-group">
+                    <label for="village">ชื่อที่อยู่ (หมู่บ้าน) <span style="color:red">*</span></label>
+                    <input type="text" id="village" placeholder="เช่น ม.เมืองเอก" required>
+                </div>
+            </div>
+
+            <div class="section-title">🎓 ข้อมูลส่วนตัวผู้เข้าเรียน</div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="studentId">รหัสนักศึกษา <span style="color:red">*</span></label>
+                    <input type="text" id="studentId" placeholder="เช่น 6633221144-5" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentName">ชื่อ-นามสกุล <span style="color:red">*</span></label>
+                    <input type="text" id="studentName" placeholder="เช่น นายสมชาย ดีใจ" required>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="amphoe">อำเภอ <span style="color:red">*</span></label>
+                    <input type="text" id="amphoe" placeholder="เช่น เมือง" required>
+                </div>
+                <div class="form-group">
+                    <label for="province">จังหวัด <span style="color:red">*</span></label>
+                    <input type="text" id="province" placeholder="เช่น ขอนแก่น" required>
+                </div>
+            </div>
+
+            <button type="button" class="location-btn" id="getLocationBtn">
+                📍 กดเพื่อแชร์พิกัดสถานที่ปัจจุบัน (จำเป็น)
+            </button>
+            <div class="location-status" id="locationStatus">ยังไม่ได้ดึงพิกัด GPS</div>
+            
+            <input type="hidden" id="locationCoords" required>
+
+            <button type="submit" class="submit-btn" id="submitBtn" disabled>ลงชื่อเข้าเรียน (Check-In)</button>
+        </form>
+    </div>
+
+    <div class="logs-container">
+        <div class="logs-title">
+            <span>📋 ประวัติการเช็คชื่อเข้าเรียนสำเร็จ</span>
+            <span class="badge-count" id="logCount">0 รายการ</span>
+        </div>
+        <div id="logsWrapper">
+            <div class="empty-log" id="emptyLogText">ยังไม่มีประวัติการเช็คชื่อในเซสชันนี้</div>
+        </div>
+    </div>
+
+    <script>
+        // 🛑 นำ URL เว็บแอปที่ได้จากการ Deploy ใน Google Apps Script มาวางที่นี่
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxN5wD6FXa4nM-9yzBIzQEX3kklRQ7UWugaiMbVxjta1Pv0rNZHkeUbXCCd07LGawyZ5Q/exec"; 
+
+        const getLocationBtn = document.getElementById('getLocationBtn');
+        const locationStatus = document.getElementById('locationStatus');
+        const locationCoords = document.getElementById('locationCoords');
+        const submitBtn = document.getElementById('submitBtn');
+        const checkInForm = document.getElementById('checkInForm');
+        const logsWrapper = document.getElementById('logsWrapper');
+        const emptyLogText = document.getElementById('emptyLogText');
+        const logCount = document.getElementById('logCount');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        let checkInLogs = [];
+
+        // 1. ระบบดึงพิกัดตำแหน่ง (Geolocation)
+        getLocationBtn.addEventListener('click', () => {
+            if (navigator.geolocation) {
+                locationStatus.innerText = "กำลังค้นหาพิกัดของคุณ...";
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude.toFixed(6);
+                        const lng = position.coords.longitude.toFixed(6);
+                        locationCoords.value = `${lat}, ${lng}`;
+                        locationStatus.innerText = `ดึงพิกัดสำเร็จ: ${lat}, ${lng}`;
+                        locationStatus.style.color = "#2e7d32";
+                        getLocationBtn.innerText = "✅ ดึงพิกัดเรียบร้อย";
+                        getLocationBtn.style.backgroundColor = "#c8e6c9";
+                        submitBtn.disabled = false; // ปลดล็อคปุ่มส่งฟอร์ม
+                    },
+                    (error) => {
+                        locationStatus.innerText = "❌ ไม่สามารถเข้าถึงพิกัดได้ กรุณาอนุญาตสิทธิ์การเข้าถึงตำแหน่ง";
+                        locationStatus.style.color = "#c62828";
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            } else {
+                locationStatus.innerText = "เบราว์เซอร์ของคุณไม่รองรับการดึงพิกัด";
+            }
+        });
+
+        // 2. ส่งข้อมูลฟอร์ม และบันทึกวันเวลาอัตโนมัติ
+        checkInForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!locationCoords.value) {
+                alert("กรุณากดแชร์พิกัดสถานที่ก่อนกดเช็คชื่อครับ");
+                return;
+            }
+
+            loadingOverlay.style.display = 'flex';
+
+            // รวบรวมข้อมูลจากฟอร์ม
+            const formData = {
+                subject: document.getElementById('subject').value,
+                village: document.getElementById('village').value,
+                studentId: document.getElementById('studentId').value,
+                studentName: document.getElementById('studentName').value,
+                amphoe: document.getElementById('amphoe').value,
+                province: document.getElementById('province').value,
+                location: locationCoords.value
+            };
+
+            // ส่งข้อมูลไปยัง Google Sheets ผ่าน Apps Script (ใช้ Fetch API)
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors', // บังคับใช้งาน Cross-Origin แบบ no-cors สำหรับ Apps Script ตัวเริ่ม
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(() => {
+                // เนื่องจากโหมด 'no-cors' จะมองไม่เห็น Response JSON ตัวเบราว์เซอร์จึงต้องสแตมป์เวลาฝั่ง Client เพิ่มเติมทันทีเพื่อแสดงผลหน้าร้าน
+                const now = new Date();
+                const timestampStr = now.toLocaleDateString('th-TH') + ' ' + now.toLocaleTimeString('th-TH');
+
+                // บันทึกเข้า Array ของหน้าเว็บ
+                const newLog = {
+                    ...formData,
+                    timestamp: timestampStr,
+                    distanceInfo: "บันทึกพิกัดแล้ว (ตรวจสอบระยะทางเพิ่มเติมโดยอาจารย์)"
+                };
+
+                checkInLogs.unshift(newLog); // เอาประวิล่าสุดขึ้นด้านบน
+                updateLogsUI();
+                
+                // เคลียร์ค่าฟอร์มบางส่วน (แต่คงชื่อคนเดิมไว้ได้เผื่อเช็ควิชาอื่น)
+                document.getElementById('subject').value = '';
+                locationCoords.value = '';
+                locationStatus.innerText = "ยังไม่ได้ดึงพิกัด GPS";
+                locationStatus.style.color = "#666";
+                getLocationBtn.innerText = "📍 กดเพื่อแชร์พิกัดสถานที่ปัจจุบัน (จำเป็น)";
+                getLocationBtn.style.backgroundColor = "#e8f5e9";
+                submitBtn.disabled = true;
+
+                loadingOverlay.style.display = 'none';
+                alert('🎉 เช็คชื่อเข้าเรียนสำเร็จ! ข้อมูลถูกบันทึกลง Google Sheet แล้ว');
+            })
+            .catch(error => {
+                loadingOverlay.style.display = 'none';
+                console.error('Error:', error);
+                alert('เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์ กรุณาลองใหม่อีกครั้ง');
+            });
+        });
+
+        // 3. ฟังก์ชัน Render การ์ดแสดงผล Logs Summary
+        function updateLogsUI() {
+            if (checkInLogs.length === 0) {
+                emptyLogText.style.display = 'block';
+                logCount.innerText = '0 รายการ';
+                return;
+            }
+
+            emptyLogText.style.display = 'none';
+            logCount.innerText = `${checkInLogs.length} รายการ`;
+            logsWrapper.innerHTML = '';
+
+            checkInLogs.forEach(log => {
+                const card = document.createElement('div');
+                card.className = 'log-card';
+                card.innerHTML = `
+                    <div class="log-header">
+                        <span>⏰ ${log.timestamp}</span>
+                        <span>📍 ${log.location}</span>
+                    </div>
+                    <div class="log-body">
+                        <h4>วิชา: ${log.subject}</h4>
+                        <p><strong>ผู้เช็คชื่อ:</strong> ${log.studentName} (${log.studentId})</p>
+                        <p><strong>ตำแหน่งที่อยู่:</strong> ${log.village} อ.${log.amphoe} จ.${log.province}</p>
+                        <p style="font-size:0.8rem; color:#2e7d32; margin-top:5px;">ℹ️ ${log.distanceInfo}</p>
+                    </div>
+                `;
+                logsWrapper.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
